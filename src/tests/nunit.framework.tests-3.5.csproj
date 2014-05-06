@@ -93,6 +93,7 @@
     <Compile Include="Attributes\RequiresSTAAttributeTests.cs" />
     <Compile Include="Attributes\RequiresThreadAttributeTests.cs" />
     <Compile Include="Attributes\SetCultureAttributeTests.cs" />
+    <Compile Include="Attributes\SortAttributeTests.cs" />
     <Compile Include="Attributes\TestCaseAttributeTests.cs" />
     <Compile Include="Attributes\TestCaseSourceTests.cs" />
     <Compile Include="Attributes\TestDummy.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Constraints\UniqueItemsConstraintTests.cs" />
     <Compile Include="Constraints\XmlSerializableTest.cs" />
     <Compile Include="Internal\AssemblyHelperTests.cs" />
+    <Compile Include="Internal\Builders\NUnitTestCaseBuilderTests.cs" />
     <Compile Include="Internal\CallContextTests.cs" />
     <Compile Include="Internal\CultureSettingAndDetectionTests.cs" />
     <Compile Include="Internal\DeduceTypeArgsFromArgs.cs" />

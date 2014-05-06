@@ -113,6 +113,11 @@ namespace NUnit.Framework.Internal
         /// </summary>
         public const string SetUICulture = "SetUICulture";
 
+		/// <summary>
+		/// Optional customized sort order
+		/// </summary>
+		public const string Sorter = "Sorter";
+
         /// <summary>
         /// The timeout value for the test
         /// </summary>

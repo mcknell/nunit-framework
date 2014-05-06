@@ -68,6 +68,7 @@
     <Compile Include="Attributes\RequiresSTAAttribute.cs" />
     <Compile Include="Attributes\RequiresThreadAttribute.cs" />
     <Compile Include="Attributes\SetUpFixtureAttribute.cs" />
+    <Compile Include="Attributes\SortAttribute.cs" />
     <Compile Include="Attributes\TestCaseBuilderAttribute.cs" />
     <Compile Include="Attributes\TimeoutAttribute.cs" />
     <Compile Include="Constraints\ConstraintResult.cs" />

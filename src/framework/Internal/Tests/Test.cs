@@ -198,7 +198,12 @@ namespace NUnit.Framework.Internal
         /// Gets this test's child tests
         /// </summary>
         /// <value>A list of child tests</value>
-        public abstract System.Collections.Generic.IList<ITest> Tests { get; }
+		public abstract System.Collections.Generic.IList<ITest> Tests { get; }
+		
+	    /// <summary>
+	    /// Optional customization of the sort order.
+	    /// </summary>
+		public SortAttribute Sorter { get; set; }
 
         #endregion
 
@@ -306,12 +311,24 @@ namespace NUnit.Framework.Internal
         /// <returns>Value of -1, 0 or +1 depending on whether the current test is less than, equal to or greater than the other test</returns>
         public int CompareTo(object obj)
         {
-            Test other = obj as Test;
+	        Test other = obj as Test;
 
-            if (other == null)
-                return -1;
+	        if (other == null)
+	        {
+		        return -1;
+	        }
 
-            return this.FullName.CompareTo(other.FullName);
+	        int compared = 0;
+	        if (Sorter != null)
+	        {
+				compared = Sorter.CompareTo(other.Sorter ?? SortAttribute.Default.Instance);
+	        }
+
+	        if (compared == 0)
+	        {
+				compared = FullName.CompareTo(other.FullName);
+	        }
+	        return compared;
         }
 
         #endregion

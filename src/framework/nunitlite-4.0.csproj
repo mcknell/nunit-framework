@@ -96,6 +96,7 @@
     <Compile Include="Attributes\SetUpFixtureAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Attributes\SortAttribute.cs" />
     <Compile Include="Attributes\TearDownAttribute.cs" />
     <Compile Include="Attributes\TestAttribute.cs" />
     <Compile Include="Attributes\TestCaseAttribute.cs" />

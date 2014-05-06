@@ -387,6 +387,17 @@ namespace NUnit.Framework.Attributes
 
         #endregion
 
+        #region SortAttribute
+
+        public void SortAttributeSetsSorterProperty()
+        {
+	        var attribute = new SortAttribute();
+	        attribute.ApplyToTest(test);
+            Assert.That(test.Properties.Get(PropertyNames.Sorter), Is.EqualTo(attribute));
+        }
+
+        #endregion
+
 #endif
     }
 }

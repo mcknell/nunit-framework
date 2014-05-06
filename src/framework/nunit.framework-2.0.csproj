@@ -64,6 +64,9 @@
     <Compile Include="Attributes\LevelOfParallelizationAttribute.cs" />
     <Compile Include="Attributes\ParallelizableAttribute.cs" />
     <Compile Include="Attributes\ParallelScope.cs" />
+    <Compile Include="Attributes\SortAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Attributes\TestCaseBuilderAttribute.cs" />
     <Compile Include="Constraints\EqualConstraintResult.cs" />
     <Compile Include="Constraints\FileExistsConstraint.cs" />
