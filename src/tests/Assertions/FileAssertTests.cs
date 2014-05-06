@@ -366,9 +366,9 @@ namespace NUnit.Framework.Assertions
         [Test]
         public void ExistsPassesWhenFileInfoExists()
         {
-            using (new TestFile("Test1.txt", "TestText1.txt"))
+            using (new TestFile("Test3.txt", "TestText1.txt"))
             {
-                var actual = new FileInfo("Test1.txt");
+                var actual = new FileInfo("Test3.txt");
                 FileAssert.Exists(actual);
             }
         }
@@ -376,9 +376,9 @@ namespace NUnit.Framework.Assertions
         [Test]
         public void ExistsPassesWhenStringExists()
         {
-            using (new TestFile("Test1.txt", "TestText1.txt"))
+            using (new TestFile("Test4.txt", "TestText1.txt"))
             {
-                FileAssert.Exists("Test1.txt");
+                FileAssert.Exists("Test4.txt");
             }
         }
 
@@ -434,9 +434,9 @@ namespace NUnit.Framework.Assertions
         [Test]
         public void DoesNotExistFailsWhenStringExists()
         {
-            using(new TestFile("Test1.txt", "TestText1.txt"))
+            using(new TestFile("Test2.txt", "TestText1.txt"))
             {
-                var ex = Assert.Throws<AssertionException>(() => FileAssert.DoesNotExist("Test1.txt"));
+                var ex = Assert.Throws<AssertionException>(() => FileAssert.DoesNotExist("Test2.txt"));
                 Assert.That(ex.Message, Is.StringStarting("  Expected: not file exists"));
             }
         }
