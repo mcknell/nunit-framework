@@ -28,12 +28,13 @@ using System;
 namespace NUnit.Framework.Attributes
 {
 	[TestFixture]
+	[Sort(1)]
 	public class SortAttributeTests
 	{
 		private const string ExpectedReason = "because";
-		private const int Less = -1;
+		private const int Before = -1;
 		private const int Same = 0;
-		private const int Greater = 1;
+		private const int After = 1;
 		private const int PositiveOrderBy = 4;
 		private const int NegativeOrderBy = -3;
 
@@ -51,90 +52,6 @@ namespace NUnit.Framework.Attributes
 			var attribute = new SortAttribute();
 
 			AssertFirstComparesToSecondAs(attribute, attribute, Same);
-		}
-
-		[Test]
-		public void CompareGreaterNegativeOrderBehindLesserNegativeOrder()
-		{
-			SortAttribute lesser = MakeNegativeSortAttribute();
-
-			var greater = new SortAttribute(lesser.Order + 1);
-
-			Assert.That(lesser.Order, Is.LessThan(greater.Order), "precondition");
-			Assert.That(greater.Order, Is.LessThan(0), "precondition");
-
-			AssertFirstComparesToSecondAs(greater, lesser, Greater);
-		}
-
-		[Test]
-		public void CompareLesserNegativeOrderAheadOfGreaterNegativeOrder()
-		{
-			SortAttribute lesser = MakeNegativeSortAttribute();
-
-			SortAttribute greater = MakeGreaterSortAttribute(lesser);
-
-			Assert.That(greater.Order, Is.LessThan(0), "precondition");
-
-			AssertFirstComparesToSecondAs(lesser, greater, Less);
-		}
-
-		[Test]
-		public void CompareLesserPositiveOrderAheadOfGreaterPositiveOrder()
-		{
-			SortAttribute lesser = MakePositiveSortAttribute();
-
-			var greater = new SortAttribute(lesser.Order + 1);
-
-			Assert.That(lesser.Order, Is.LessThan(greater.Order), "precondition");
-			Assert.That(lesser.Order, Is.GreaterThan(0), "precondition");
-
-			AssertFirstComparesToSecondAs(lesser, greater, Less);
-		}
-
-		[Test]
-		public void CompareNegativeOrderBehindZero()
-		{
-			SortAttribute negativeSortAttribute = MakeNegativeSortAttribute();
-
-			var attribute = new SortAttribute();
-
-			AssertFirstComparesToSecondAs(negativeSortAttribute, attribute, Less);
-		}
-
-		[Test]
-		public void CompareObjectAheadOfNull()
-		{
-			AssertFirstComparesToSecondAs(new SortAttribute(), null, Greater);
-		}
-
-		[Test]
-		public void ComparePositiveOrderAheadOfZero()
-		{
-			SortAttribute positiveSortAttribute = MakePositiveSortAttribute();
-
-			var attribute = new SortAttribute();
-
-			AssertFirstComparesToSecondAs(positiveSortAttribute, attribute, Greater);
-		}
-
-		[Test]
-		public void CompareZeroAheadOfNegativeOrder()
-		{
-			SortAttribute negativeSortAttribute = MakeNegativeSortAttribute();
-
-			var attribute = new SortAttribute();
-
-			AssertFirstComparesToSecondAs(attribute, negativeSortAttribute, Greater);
-		}
-
-		[Test]
-		public void CompareZeroBehindPositiveOrder()
-		{
-			SortAttribute positiveSortAttribute = MakePositiveSortAttribute();
-
-			var attribute = new SortAttribute();
-
-			AssertFirstComparesToSecondAs(attribute, positiveSortAttribute, Less);
 		}
 
 		[Test]
@@ -181,6 +98,51 @@ namespace NUnit.Framework.Attributes
 		}
 
 		[Test]
+		[Sort(3, Reason = "cuz why not")]
+		public void LesserNegativeOrderComparesBeForeGreaterNegativeOrder()
+		{
+			SortAttribute lesser = MakeNegativeSortAttribute();
+
+			SortAttribute greater = MakeGreaterSortAttribute(lesser);
+
+			Assert.That(greater.Order, Is.LessThan(0), "precondition");
+
+			AssertLessThan(lesser, greater);
+		}
+
+		[Test]
+		[Sort(4, Reason = "cuz why")]
+		public void LesserPositiveOrderComparesBeforeGreaterPositiveOrder()
+		{
+			SortAttribute lesser = MakePositiveSortAttribute();
+
+			var greater = new SortAttribute(lesser.Order + 1);
+
+			Assert.That(lesser.Order, Is.LessThan(greater.Order), "precondition");
+			Assert.That(lesser.Order, Is.GreaterThan(0), "precondition");
+
+			AssertLessThan(lesser, greater);
+		}
+
+		[Test]
+		[Sort(-5, Reason = "late")]
+		public void NegativeOrderComparesAfterZero()
+		{
+			SortAttribute negativeSortAttribute = MakeNegativeSortAttribute();
+
+			var attribute = new SortAttribute();
+
+			AssertLessThan(attribute, negativeSortAttribute);
+		}
+
+		[Test]
+		[Sort(-7, Reason = "not AS late")]
+		public void ObjectComparesAfterNull()
+		{
+			AssertFirstComparesToSecondAs(new SortAttribute(), null, After);
+		}
+
+		[Test]
 		public void Override()
 		{
 			Action<int> action = new Overriding().Foo;
@@ -191,9 +153,25 @@ namespace NUnit.Framework.Attributes
 			Assert.That(sortAttribute.Order, Is.EqualTo(Overriding.NewSort));
 		}
 
+		[Test]
+		public void PositiveOrderCompareBeforeZero()
+		{
+			SortAttribute positiveSortAttribute = MakePositiveSortAttribute();
+
+			var attribute = new SortAttribute();
+
+			AssertLessThan(positiveSortAttribute, attribute);
+		}
+
 		private static void AssertFirstComparesToSecondAs(SortAttribute first, SortAttribute second, int expected)
 		{
 			Assert.That(first.CompareTo(second), Is.EqualTo(expected));
+		}
+
+		private void AssertLessThan(SortAttribute lesser, SortAttribute greater)
+		{
+			AssertFirstComparesToSecondAs(lesser, greater, Before);
+			AssertFirstComparesToSecondAs(greater, lesser, After);
 		}
 
 		private static SortAttribute MakeGreaterSortAttribute(SortAttribute lesser)
@@ -217,30 +195,29 @@ namespace NUnit.Framework.Attributes
 			return attribute;
 		}
 
+		private class Base
+		{
+			public const int OldSort = 3;
+
+			[Sort(OldSort)]
+			public virtual void Foo(int bar) { }
+		}
+
+		private class Derived : Base { }
+
+		private class Overriding : Base
+		{
+			public const int NewSort = -5;
+
+			[Sort(NewSort)]
+			public override void Foo(int bar) { }
+		}
+
 		private class SubSortAttribute : SortAttribute
 		{
 			protected override int Compare(SortAttribute other)
 			{
 				throw new Exception();
-			}
-		}
-
-		private class Base
-		{
-			public const int OldSort = 3;
-			[Sort(OldSort)]
-			public virtual void Foo(int bar){}
-		}
-
-		private class Derived : Base
-		{}
-
-		private class Overriding : Base
-		{
-			public const int NewSort = -5;
-			[Sort(NewSort)]
-			public override void Foo(int bar)
-			{
 			}
 		}
 	}

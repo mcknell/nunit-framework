@@ -126,31 +126,45 @@ namespace NUnit.Framework
 		/// <returns></returns>
 		protected virtual int Compare(SortAttribute other)
 		{
+			int compare;
 			if (Order == 0F)
 			{
 				if (other.Order == 0F)
 				{
-					return 0;
+					compare = 0;
 				}
-				if (other.Order > 0)
+				else if (other.Order > 0)
 				{
-					return -1;
+					compare = 1; // zero sorts behind positive
 				}
-				return 1;
+				else // if other.Order < 0
+				{
+					compare = -1; // zero sorts ahead of negative
+				}
 			}
-			if (Order > 0)
+			else if (Order > 0)
 			{
 				if (other.Order > 0)
 				{
-					return Order.CompareTo(other.Order);
+					compare = Order.CompareTo(other.Order);
 				}
-				return 1;
+				else
+				{
+					compare = -1; // positive sorts ahead of zero or negative
+				}
 			}
-			if (other.Order < 0)
+			else // if Order < 0
 			{
-				return Order.CompareTo(other.Order);
+				if (other.Order < 0)
+				{
+					compare = Order.CompareTo(other.Order);
+				}
+				else 
+				{
+					compare = 1; // negative sorts behind zero or positive
+				}
 			}
-			return -1;
+			return compare;
 		}
 
 		/// <summary>
@@ -170,23 +184,26 @@ namespace NUnit.Framework
 		}
 
 		/// <summary>
-		/// Method that implements <see cref="IComparable.CompareTo"/>.
-		/// </summary>
-		/// <param name="left">Basis for comparison</param>
-		/// <param name="right">Object to be compared to</param>
-		/// <returns></returns>
-		public int Sort(ITest left, ITest right)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Modifies a test as defined for the specific attribute.
 		/// </summary>
 		/// <param name="test">The test to modify</param>
 		public void ApplyToTest(Test test)
 		{
+			test.Properties.Add(PropertyNames.Sorter, ToString());
+
 			test.Sorter = this;
+		}
+
+		/// <summary>
+		/// Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		/// A string that represents the current object.
+		/// </returns>
+		/// <filterpriority>2</filterpriority>
+		public override string ToString()
+		{
+			return string.Format("Sort {0} {1}", Order, Reason).Trim();
 		}
     }
 }
