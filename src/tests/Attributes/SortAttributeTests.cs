@@ -39,10 +39,10 @@ namespace NUnit.Framework.Attributes
 		private const int NegativeOrderBy = -3;
 
 		[Test]
-		public void CallsTemplatedMethod()
+		public void CallsVirtualMethod()
 		{
 			var normal = new SortAttribute();
-			var saboteur = new SubSortAttribute();
+			var saboteur = new SaboteurSortAttribute();
 			Assert.Throws<Exception>(() => saboteur.CompareTo(normal));
 		}
 
@@ -213,7 +213,7 @@ namespace NUnit.Framework.Attributes
 			public override void Foo(int bar) { }
 		}
 
-		private class SubSortAttribute : SortAttribute
+		private class SaboteurSortAttribute : SortAttribute
 		{
 			protected override int Compare(SortAttribute other)
 			{
