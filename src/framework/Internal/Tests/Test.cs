@@ -22,6 +22,8 @@
 // ***********************************************************************
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework.Interfaces;
 
@@ -230,7 +232,7 @@ namespace NUnit.Framework.Internal
         internal bool IsAsynchronous { get; set; }
 
         #endregion
-
+		
         #region Other Public Methods
 
         /// <summary>
@@ -313,24 +315,46 @@ namespace NUnit.Framework.Internal
         {
 	        Test other = obj as Test;
 
-	        if (other == null)
-	        {
-		        return -1;
-	        }
-
-	        int compared = 0;
-	        if (Sorter != null)
-	        {
-				compared = Sorter.CompareTo(other.Sorter ?? SortAttribute.Default.Instance);
-	        }
-
-	        if (compared == 0)
-	        {
-				compared = FullName.CompareTo(other.FullName);
-	        }
-	        return compared;
+	        return Compare(this, other);
         }
 
         #endregion
-    }
+
+		/// <summary>
+		/// Compares a non-null left <see cref="Test"/> to a possibly-null right <see cref="Test"/>, a la <see cref="IComparer"/>
+		/// </summary>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static int Compare(Test left, Test right)
+		{
+			if (left == null)
+			{
+				throw new ArgumentNullException("left");
+			}
+
+			if (right == null)
+			{
+				return -1;
+			}
+
+			int compared = 0;
+			if (left.Sorter != null)
+			{
+				compared = left.Sorter.CompareTo(right.Sorter ?? SortAttribute.Default.Instance);
+			}
+			else if (right.Sorter != null)
+			{
+				// since we don't have a Sorter but they do, use theirs but invert the result
+				compared = 0 - right.Sorter.CompareTo(SortAttribute.Default.Instance);
+			}
+
+			if (compared == 0)
+			{
+				compared = left.FullName.CompareTo(right.FullName);
+			}
+			return compared;
+		}
+	}
 }
